@@ -1,5 +1,13 @@
 # Revisão do portfólio — 30/10/2026
 
+## Segunda revisão do Site
+
+A revisão solicitada após a primeira versão substitui “r.” por um monograma RA, remove setas diagonais decorativas e uniformiza os ícones de menu, localização, conferência e retorno ao topo. A paleta foi preservada. O diagrama de Venn deu lugar a dois blocos de saúde e dados conectados por linhas.
+
+Foram acrescentados dois cards vazios “Coming soon”, entrada discreta de seções, indicação da seção ativa e reação leve da arte ao ponteiro. O card Caça-Asteroides passou a mostrar quatro quadros de um vídeo fornecido, em GIF recortado com pausa e alternativa estática; a seleção e a conversão estão registradas em `assets/README.md`.
+
+Após aprovação no Site privado, esta revisão foi incorporada ao pull request do repositório. A falha `Workers Builds: renatodeandrade-com` foi tratada adicionando `wrangler.jsonc` e a preparação de `dist/`; o log indicava ausência da entrada/diretório de arquivos estáticos. O restante deste documento registra o diagnóstico e o escopo da primeira versão.
+
 ## Estado analisado
 
 Repositório: [renatodeandrade/renatodeandrade.com](https://github.com/renatodeandrade/renatodeandrade.com).

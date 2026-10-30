@@ -1,7 +1,7 @@
 // Progressive enhancement: the page and all links also work without JavaScript.
 const menuButton = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('#primary-navigation');
-const mobileViewport = window.matchMedia('(max-width: 760px)');
+const mobileViewport = window.matchMedia('(max-width: 960px)');
 
 if (menuButton && navigation) {
   function setMenuOpen(open) {
@@ -48,6 +48,18 @@ if (menuButton && navigation) {
 }
 
 document.querySelector('#copyright-year').textContent = new Date().getFullYear();
+
+// Native language links work without JavaScript; keep a selected section when possible.
+const languageLinks = [...document.querySelectorAll('[data-language-link]')];
+function updateLanguageLinks() {
+  const hash = window.location.hash;
+  const section = hash && document.getElementById(hash.slice(1));
+  languageLinks.forEach((link) => {
+    link.href = link.dataset.languageLink + (section ? hash : '');
+  });
+}
+window.addEventListener('hashchange', updateLanguageLinks);
+updateLanguageLinks();
 
 // Reveal once on entry. Never hide content when motion is reduced or unsupported.
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -152,6 +164,12 @@ const observation = document.querySelector('[data-observation]');
 if (observation) {
   const image = observation.querySelector('img');
   const control = observation.querySelector('.animation-toggle');
+  const labels = {
+    play: control.dataset.playText,
+    pause: control.dataset.pauseText,
+    playLabel: control.dataset.playLabel,
+    pauseLabel: control.dataset.pauseLabel,
+  };
   let inView = false;
   let playbackPreference = null;
   let playing = false;
@@ -165,8 +183,8 @@ if (observation) {
       image.src = playing ? image.dataset.animatedSrc : image.dataset.stillSrc;
     }
     control.classList.toggle('is-playing', playing);
-    control.querySelector('span').textContent = playing ? 'Pause' : 'Play';
-    control.setAttribute('aria-label', playing ? 'Pause observation animation' : 'Play observation animation');
+    control.querySelector('span').textContent = playing ? labels.pause : labels.play;
+    control.setAttribute('aria-label', playing ? labels.pauseLabel : labels.playLabel);
   }
 
   control.addEventListener('click', () => {

@@ -1,5 +1,15 @@
 # Revisão do portfólio — 30/10/2026
 
+## Versão bilíngue — português como padrão
+
+A raiz `/` agora apresenta o conteúdo em PT-BR; `/en/` mantém a versão em inglês. O seletor PT / EN usa links nativos, fica sempre visível no celular e, com JavaScript, mantém a seção escolhida. Não há redirecionamento automático nem dependência de armazenamento local. Cada HTML inclui idioma, título, descrição, canonical, Open Graph e alternativas `hreflang` correspondentes.
+
+Os dois subtítulos genéricos das seções de projetos e ferramentas foram removidos. A abertura, a apresentação, a trajetória e o contato receberam textos curtos, ligados à experiência farmacêutica e à formação em dados. “A different perspective” foi substituído por “Saúde + Dados” / “Healthcare + Data”. Os ícones monocromáticos do LinkedIn e GitHub acompanham os nomes das plataformas.
+
+A estrutura pública de [Gabriel Greco](https://gabrielgreco.com) foi consultada em 30/10/2026. Foram aproveitados o acesso direto a todos os repositórios junto dos projetos e a separação de idiomas por URLs próprias. A adaptação preserva a paleta e o desenho existentes. Jogos, assistente, rastreamento e dependências de interface não foram acrescentados.
+
+O preparo de publicação inclui `en/index.html`; CSS, JavaScript e imagens continuam compartilhados. A validação desta revisão está no README. Este registro substitui as decisões históricas abaixo sobre manter apenas o inglês e adiar a tradução. O fluxo de publicação usa pull request, verificação do Cloudflare e merge na `main`, conforme autorização do proprietário.
+
 ## Segunda revisão do Site
 
 A revisão solicitada após a primeira versão substitui “r.” por um monograma RA, remove setas diagonais decorativas e uniformiza os ícones de menu, localização, conferência e retorno ao topo. A paleta foi preservada. O diagrama de Venn deu lugar a dois blocos de saúde e dados conectados por linhas.

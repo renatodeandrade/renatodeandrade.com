@@ -6,6 +6,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const output = resolve(root, 'dist');
 const files = [
   'index.html',
+  'en/index.html',
   'styles.css',
   'script.js',
   'favicon.svg',

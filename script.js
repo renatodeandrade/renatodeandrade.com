@@ -209,3 +209,68 @@ if (observation) {
   });
   document.addEventListener('visibilitychange', updateObservation);
 }
+
+// Illustrative charts: manual selection stops rotation; motion preferences win.
+const chartCarousel = document.querySelector('[data-chart-carousel]');
+if (chartCarousel) {
+  const slides = [...chartCarousel.querySelectorAll('.chart-slide')];
+  const dots = [...chartCarousel.querySelectorAll('.chart-dot')];
+  const playback = chartCarousel.querySelector('.chart-playback');
+  const name = chartCarousel.querySelector('.chart-name');
+  const counter = chartCarousel.querySelector('.chart-counter');
+  const announcement = chartCarousel.querySelector('.chart-announcement');
+  let active = 0;
+  let playing = !reducedMotion.matches;
+  let visible = true;
+  let hovering = false;
+  let timer;
+  chartCarousel.querySelector('.chart-toolbar').hidden = false;
+  function scheduleChart() {
+    clearTimeout(timer);
+    const paused = !playing || reducedMotion.matches;
+    playback.hidden = reducedMotion.matches;
+    playback.classList.toggle('is-paused', paused);
+    playback.setAttribute('aria-label', paused ? playback.dataset.playLabel : playback.dataset.pauseLabel);
+    if (!paused && visible && !hovering && !document.hidden && !chartCarousel.contains(document.activeElement)) {
+      timer = setTimeout(() => selectChart((active + 1) % slides.length, false), 6000);
+    }
+  }
+  function selectChart(index, manual) {
+    active = index;
+    slides.forEach((slide, i) => slide.classList.toggle('is-active', i === active));
+    dots.forEach((dot, i) => dot.setAttribute('aria-pressed', String(i === active)));
+    name.textContent = slides[active].dataset.chartName;
+    counter.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    if (manual) {
+      playing = false;
+      announcement.textContent = name.textContent;
+    }
+    scheduleChart();
+  }
+  dots.forEach((dot, i) => dot.addEventListener('click', () => selectChart(i, true)));
+  playback.addEventListener('click', () => {
+    if (reducedMotion.matches) {
+      selectChart((active + 1) % slides.length, true);
+      return;
+    }
+    playing = !playing;
+    scheduleChart();
+  });
+  chartCarousel.querySelector('.chart-pagination').addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? slides.length - 1 : (active + (event.key === 'ArrowRight' ? 1 : -1) + slides.length) % slides.length;
+    selectChart(next, true);
+    dots[next].focus();
+  });
+  chartCarousel.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovering = true; scheduleChart(); } });
+  chartCarousel.addEventListener('pointerleave', () => { hovering = false; scheduleChart(); });
+  chartCarousel.addEventListener('focusin', scheduleChart);
+  chartCarousel.addEventListener('focusout', () => setTimeout(scheduleChart, 0));
+  document.addEventListener('visibilitychange', scheduleChart);
+  reducedMotion.addEventListener('change', () => { playing = !reducedMotion.matches; scheduleChart(); });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; scheduleChart(); }, { threshold: .4 }).observe(chartCarousel);
+  }
+  scheduleChart();
+}

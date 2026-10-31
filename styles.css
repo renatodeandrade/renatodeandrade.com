@@ -350,3 +350,10 @@ h1 { font-size: clamp(3.5rem, 5.6vw, 5.1rem); line-height: 1.02; margin-block: 2
 /* English companion title preserves the original project name. */
 .game-english-name { display: block; margin-top: 18px; font-size: .75rem; line-height: 1.4; font-weight: 400; letter-spacing: .08em; color: var(--lime); }
 .project-english-name { display: block; margin-top: 8px; font-size: .75rem; line-height: 1.4; font-weight: 400; letter-spacing: .02em; color: var(--muted); }
+
+/* Drag/swipe chart area; native vertical scrolling and pinch zoom remain available. */
+.chart-stage { touch-action: pan-y pinch-zoom; cursor: grab; user-select: none; -webkit-user-select: none; }
+.chart-stage.is-dragging { cursor: grabbing; }
+.chart-slide.is-active { transform: translateX(var(--chart-drag, 0px)); }
+.chart-stage.is-dragging .chart-slide.is-active { transition: opacity .8s ease; }
+@media (prefers-reduced-motion: reduce) { .chart-slide.is-active { transform: none; } }

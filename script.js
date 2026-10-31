@@ -224,6 +224,7 @@ if (chartCarousel) {
   let visible = true;
   let hovering = false;
   let timer;
+  let gesture = null;
   chartCarousel.querySelector('.chart-toolbar').hidden = false;
   function scheduleChart() {
     clearTimeout(timer);
@@ -231,7 +232,7 @@ if (chartCarousel) {
     playback.hidden = reducedMotion.matches;
     playback.classList.toggle('is-paused', paused);
     playback.setAttribute('aria-label', paused ? playback.dataset.playLabel : playback.dataset.pauseLabel);
-    if (!paused && visible && !hovering && !document.hidden && !chartCarousel.contains(document.activeElement)) {
+    if (!paused && !gesture && visible && !hovering && !document.hidden && !chartCarousel.contains(document.activeElement)) {
       timer = setTimeout(() => selectChart((active + 1) % slides.length, false), 6000);
     }
   }
@@ -263,6 +264,46 @@ if (chartCarousel) {
     selectChart(next, true);
     dots[next].focus();
   });
+  // Pointer events cover touch, pen and mouse without blocking vertical scrolling.
+  const stage = chartCarousel.querySelector('.chart-stage');
+  function finishGesture(event, cancelled = false) {
+    if (!gesture || event.pointerId !== gesture.id) return;
+    const { id, x, y } = gesture;
+    const dx = event.clientX - x;
+    const dy = event.clientY - y;
+    const threshold = Math.min(64, Math.max(32, stage.clientWidth * .12));
+    gesture = null;
+    stage.classList.remove('is-dragging');
+    stage.style.removeProperty('--chart-drag');
+    if (stage.hasPointerCapture(id)) stage.releasePointerCapture(id);
+    if (!cancelled && Math.abs(dx) >= threshold && Math.abs(dx) > Math.abs(dy) * 1.3) {
+      selectChart((active + (dx < 0 ? 1 : -1) + slides.length) % slides.length, true);
+    } else {
+      scheduleChart();
+    }
+  }
+  stage.addEventListener('pointerdown', event => {
+    if (!event.isPrimary || event.button !== 0 || gesture) return;
+    gesture = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    stage.setPointerCapture(event.pointerId);
+    stage.classList.add('is-dragging');
+    scheduleChart();
+  });
+  stage.addEventListener('pointermove', event => {
+    if (!gesture || event.pointerId !== gesture.id) return;
+    const dx = event.clientX - gesture.x;
+    const dy = event.clientY - gesture.y;
+    if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx) * 1.3) {
+      finishGesture(event, true);
+      return;
+    }
+    if (!reducedMotion.matches && Math.abs(dx) > Math.abs(dy)) {
+      stage.style.setProperty('--chart-drag', `${Math.max(-24, Math.min(24, dx * .15))}px`);
+    }
+  });
+  stage.addEventListener('pointerup', event => finishGesture(event));
+  stage.addEventListener('pointercancel', event => finishGesture(event, true));
+  stage.addEventListener('lostpointercapture', event => finishGesture(event, true));
   chartCarousel.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovering = true; scheduleChart(); } });
   chartCarousel.addEventListener('pointerleave', () => { hovering = false; scheduleChart(); });
   chartCarousel.addEventListener('focusin', scheduleChart);

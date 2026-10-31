@@ -295,3 +295,26 @@ h1 { font-size: clamp(3.5rem, 5.6vw, 5.1rem); line-height: 1.02; margin-block: 2
   .reveal-pending { opacity: 1; translate: none; }
   .site-header { position: static; }
 }
+
+/* Data-first introduction and dedicated domain experience */
+.data-perspective { min-width: 0; padding: 28px; color: var(--lime); background: var(--green); border-radius: 14px; }
+.data-perspective > .eyebrow { font-size: .65rem; }
+.data-field { margin: 22px 0; }
+.data-field svg { width: 100%; height: auto; }
+.data-process { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; padding-top: 20px; border-top: 1px solid #547165; font-size: .52rem; letter-spacing: .09em; }
+#skills { padding-bottom: 65px; }
+#projects { padding-top: 65px; border-top: 1px solid var(--line); }
+.domain-project-link { margin-top: 25px; }
+.health-section { padding-block: 90px; background: var(--soft); }
+.health-intro { display: grid; grid-template-columns: 1.2fr 1fr; align-items: center; gap: 70px; margin-bottom: 42px; }
+.health-intro > div > p:not(.eyebrow) { color: var(--muted); font-size: .92rem; margin-top: 22px; max-width: 570px; }
+.health-intro .perspective { max-width: 370px; justify-self: end; width: 100%; }
+.health-intro .perspective-bottom p { font-size: 1.1rem; }
+@media (max-width: 960px) { .health-intro { gap: 35px; } }
+@media (max-width: 640px) {
+ .health-intro { grid-template-columns: 1fr; }
+ .health-intro .perspective { justify-self: start; max-width: 100%; }
+ .health-section { padding-block: 60px; }
+ .data-perspective { padding: 22px; }
+ .domain-project-link { align-items: flex-start; }
+}

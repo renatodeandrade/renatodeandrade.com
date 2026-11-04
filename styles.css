@@ -372,9 +372,9 @@ h1 { font-size: clamp(3.5rem, 5.6vw, 5.1rem); line-height: 1.02; margin-block: 2
 .health-projects .project-content { display: flex; flex-direction: column; align-items: flex-start; padding: clamp(22px, 3vw, 32px); }
 .health-projects .project-content > h3 { font-size: clamp(1.65rem, 3vw, 2.2rem); }
 .health-projects .project-content > .tags { margin-top: auto; padding-top: 18px; }
-.vaccination-art { background: #233a55; color: #e9f1fa; }
-.vaccination-art .project-art-top, .vaccination-art .project-art-bottom { color: #cadbf0; }
-.vaccination-tiles { width: min(68%, 240px); height: 130px; align-self: center; }
+.vaccination-art { background: #285441; color: #f0f7e2; }
+.vaccination-art .project-art-top, .vaccination-art .project-art-bottom { color: #dcebd0; }
+.vaccination-map { width: 144px; height: 144px; align-self: center; }
 
 @media (max-width: 760px) {
   .health-projects { grid-template-columns: minmax(0, 1fr); gap: 20px; }

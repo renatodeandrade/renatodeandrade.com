@@ -357,3 +357,25 @@ h1 { font-size: clamp(3.5rem, 5.6vw, 5.1rem); line-height: 1.02; margin-block: 2
 .chart-slide.is-active { transform: translateX(var(--chart-drag, 0px)); }
 .chart-stage.is-dragging .chart-slide.is-active { transition: opacity .8s ease; }
 @media (prefers-reduced-motion: reduce) { .chart-slide.is-active { transform: none; } }
+
+/* Healthcare projects share a cover size and a common action baseline. */
+.health-projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.health-projects .featured-project { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
+.health-projects .project-art { min-height: 0; height: 230px; padding: 24px; }
+.health-projects .game-wordmark { font-size: clamp(3rem, 5vw, 4.5rem); padding: 0 0 4px; }
+.health-projects .game-english-name { margin-top: 12px; }
+.health-projects .game-motif { bottom: 39px; right: 34px; transform: rotate(12deg) scale(.68); transform-origin: bottom right; }
+.health-projects .project-content { display: flex; flex-direction: column; align-items: flex-start; padding: clamp(22px, 3vw, 32px); }
+.health-projects .project-content > h3 { font-size: clamp(1.65rem, 3vw, 2.2rem); }
+.health-projects .project-content > .tags { margin-top: auto; padding-top: 18px; }
+.vaccination-art { background: #233a55; color: #e9f1fa; }
+.vaccination-art .project-art-top, .vaccination-art .project-art-bottom { color: #cadbf0; }
+.vaccination-tiles { width: min(68%, 240px); height: 130px; align-self: center; }
+
+@media (max-width: 760px) {
+  .health-projects { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+}

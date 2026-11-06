@@ -338,8 +338,17 @@ h1 { font-size: clamp(3.5rem, 5.6vw, 5.1rem); line-height: 1.02; margin-block: 2
 .chart-playback.is-paused .chart-play-icon { display: block; }
 .chart-playback.is-paused .chart-pause-icon { display: none; }
 .data-perspective button:focus-visible { outline-color: var(--lime); outline-offset: -4px; }
-.chart-slide.is-active .chart-bar { transform-origin: center 230px; animation: chart-rise 1.3s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(var(--i) * 65ms); }
-.chart-slide.is-active .chart-cell { animation: chart-cell-in 1.2s ease both; animation-delay: calc(var(--i) * 55ms); }
+[data-chart-step="0"] { --chart-step: 0; }
+[data-chart-step="1"] { --chart-step: 1; }
+[data-chart-step="2"] { --chart-step: 2; }
+[data-chart-step="3"] { --chart-step: 3; }
+[data-chart-step="4"] { --chart-step: 4; }
+[data-chart-step="5"] { --chart-step: 5; }
+[data-chart-step="6"] { --chart-step: 6; }
+[data-chart-step="7"] { --chart-step: 7; }
+[data-chart-step="8"] { --chart-step: 8; }
+.chart-slide.is-active .chart-bar { transform-origin: center 230px; animation: chart-rise 1.3s cubic-bezier(.22,1,.36,1) both; animation-delay: calc(var(--chart-step) * 65ms); }
+.chart-slide.is-active .chart-cell { animation: chart-cell-in 1.2s ease both; animation-delay: calc(var(--chart-step) * 55ms); }
 @keyframes chart-rise { from { transform: scaleY(.1); } to { transform: scaleY(1); } }
 @keyframes chart-cell-in { from { transform: translateY(5px); filter: opacity(.1); } to { transform: none; filter: opacity(1); } }
 @media (prefers-reduced-motion: reduce) { .chart-slide { transform: none; } }

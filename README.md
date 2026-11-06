@@ -17,7 +17,8 @@ Portfólio profissional em português do Brasil, com uma versão secundária em 
 | `favicon.svg` | Monograma RA da aba do navegador |
 | `assets/` | GIF de quatro imagens, alternativa estática e origem do material |
 | `wrangler.jsonc` | Configuração do Cloudflare Workers e pasta de publicação |
-| `scripts/build.mjs` | Prepara somente os sete arquivos públicos em `dist/` |
+| `_headers` | Cabeçalhos de segurança aplicados pelo Cloudflare aos arquivos estáticos |
+| `scripts/build.mjs` | Prepara os arquivos públicos e as regras de cabeçalho em `dist/` |
 | `docs/REVIEW.md` | Diagnóstico do original, decisões e próxima etapa |
 
 Sem frameworks, dependências de execução, fontes remotas ou compilação de código. A preparação para publicação apenas copia os arquivos públicos. A página funciona sem JavaScript; nesse caso, a navegação permanece expandida e a observação astronômica aparece como imagem estática. A abertura e a capa do No Balcão são ilustrações vetoriais/CSS decorativas. O card Caça-Asteroides usa um recorte de vídeo fornecido pelo proprietário, rotulado como exemplo de observação; detalhes em `assets/README.md`.
@@ -36,7 +37,7 @@ Acesse `http://localhost:8000/` ou `http://localhost:8000/en/`.
 
 A integração do GitHub está vinculada ao **Cloudflare Workers Builds**, no Worker `renatodeandrade-com`. O erro de publicação ocorria porque faltava a configuração de entrada/arquivos estáticos do Wrangler.
 
-`wrangler.jsonc` declara `assets.directory: "./dist"` e executa `node scripts/build.mjs` automaticamente antes do upload. O script inclui os dois HTMLs, o CSS, o JavaScript, o favicon, o GIF e sua imagem estática. Documentação e configurações não entram na pasta pública. Não é necessário criar um servidor JavaScript para este site.
+`wrangler.jsonc` declara `assets.directory: "./dist"` e executa `node scripts/build.mjs` automaticamente antes do upload. O script inclui os dois HTMLs, o CSS, o JavaScript, o favicon, o GIF, sua imagem estática e o arquivo `_headers`, que o Cloudflare lê como configuração. Documentação e configurações não entram na pasta pública. Não é necessário criar um servidor JavaScript para este site.
 
 Configuração da integração existente:
 
@@ -44,7 +45,7 @@ Configuração da integração existente:
 - Branch de produção: `main`.
 - Comando de build do painel: pode permanecer vazio; o Wrangler executa o preparo configurado.
 - Deploy de produção: `npx wrangler deploy`.
-- Upload de branches de revisão: `npx wrangler versions upload`.
+- As URLs públicas `workers.dev` e de prévia ficam desabilitadas pelo Wrangler.
 
 Validação local, com Node.js instalado:
 

@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = resolve(root, 'dist');
 const files = [
+  '_headers',
   'index.html',
   'en/index.html',
   'styles.css',

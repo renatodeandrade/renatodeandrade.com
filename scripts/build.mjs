@@ -13,7 +13,9 @@ const files = [
   'favicon.svg',
   'assets/asteroid-observation.gif',
   'assets/asteroid-observation-still.png',
-  'assets/fonts/inter-latin-var.woff2',
+  'assets/fonts/plex-sans-var.woff2',
+  'assets/fonts/plex-mono-500.woff2',
+  'assets/fonts/plex-serif-400.woff2',
   'assets/fonts/OFL.txt',
 ];
 

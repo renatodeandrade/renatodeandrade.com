@@ -210,125 +210,11 @@ if (observation) {
   document.addEventListener('visibilitychange', updateObservation);
 }
 
-// Illustrative charts share the same 24 marks: each chart is a new arrangement of
-// those marks, so one figure rearranges itself into the next instead of fading.
-const CHART_MARKS = 24;
-const chartLayouts = (() => {
-  const mark = (cx, cy, w, h, r, o) => ({ cx, cy, w, h, r, o });
-  // 01 Relações — scatter along a rising trend.
-  const scatter = Array.from({ length: CHART_MARKS }, (_, i) => {
-    const t = i / (CHART_MARKS - 1);
-    const x = 60 + t * 330;
-    const trend = 205 - 160 * t + 18 * Math.sin(t * 7.5);
-    const noise = [10, -14, 6, -8, 16, -4, -12, 8, -6, 12, -16, 4, 10, -10, 6, -6, 14, -12, 4, -4, 10, -8, 6, -2][i];
-    const size = [10, 8, 12, 8, 10, 8, 12, 10, 8, 10, 12, 8, 10, 8, 12, 8, 10, 12, 8, 10, 12, 8, 10, 12][i];
-    return mark(x, trend + noise, size, size, size / 2, .95);
-  });
-  // 02 Comparações — six bars, each built from four stacked blocks.
-  const barHeights = [64, 104, 88, 152, 128, 184];
-  const bars = [];
-  barHeights.forEach((height, b) => {
-    const block = (height - 12) / 4;
-    for (let k = 0; k < 4; k++) {
-      bars.push(mark(72 + b * 56, 230 - k * (block + 4) - block / 2, 28, block, 3, .4 + b * .1));
-    }
-  });
-  // 03 Distribuições — a dot histogram shaped like a bell curve.
-  const columns = [1, 2, 3, 5, 6, 4, 2, 1];
-  const dist = [];
-  columns.forEach((count, c) => {
-    for (let k = 0; k < count; k++) dist.push(mark(72 + c * 42, 220 - k * 24, 18, 18, 9, .55 + count * .07));
-  });
-  // 04 Padrões — a 6 × 4 heatmap, read column by column.
-  const heat = [
-    [.18, .28, .46, .27, .16, .24],
-    [.31, .58, .76, .48, .21, .33],
-    [.49, .84, 1, .62, .37, .23],
-    [.27, .52, .72, .89, .51, .30],
-  ];
-  const cells = [];
-  for (let c = 0; c < 6; c++) {
-    for (let r = 3; r >= 0; r--) cells.push(mark(82 + c * 56, 56 + r * 52, 44, 44, 4, heat[r][c]));
-  }
-  // 05 Composição — a ring of dots split into three shares.
-  const ring = Array.from({ length: CHART_MARKS }, (_, i) => {
-    const a = -Math.PI / 2 + (i / CHART_MARKS) * Math.PI * 2;
-    return mark(220 + Math.cos(a) * 88, 136 + Math.sin(a) * 88, 20, 20, 10, i < 10 ? 1 : i < 17 ? .6 : .3);
-  });
-  return [
-    { marks: scatter, axes: .3 },
-    { marks: bars, axes: .25 },
-    { marks: dist, axes: .25 },
-    { marks: cells, axes: 0 },
-    { marks: ring, axes: 0 },
-  ];
-})();
-
-function createMorphChart(stage) {
-  const ns = 'http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(ns, 'svg');
-  svg.setAttribute('viewBox', '0 0 440 280');
-  svg.setAttribute('class', 'chart-morph');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.innerHTML = '<defs><pattern id="morph-grid" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="currentColor" opacity=".2"/></pattern></defs><rect width="440" height="280" fill="url(#morph-grid)"/><path class="chart-axes" d="M35 230H410M35 230V25" stroke="currentColor" fill="none"/>';
-  const axes = svg.querySelector('.chart-axes');
-  const rects = Array.from({ length: CHART_MARKS }, () => {
-    const rect = document.createElementNS(ns, 'rect');
-    rect.setAttribute('fill', 'currentColor');
-    svg.append(rect);
-    return rect;
-  });
-  stage.replaceChildren(svg);
-  let current = { marks: chartLayouts[0].marks.map(m => ({ ...m })), axes: chartLayouts[0].axes };
-  let frame;
-  const draw = state => {
-    state.marks.forEach((m, i) => {
-      const rect = rects[i];
-      rect.setAttribute('x', (m.cx - m.w / 2).toFixed(2));
-      rect.setAttribute('y', (m.cy - m.h / 2).toFixed(2));
-      rect.setAttribute('width', m.w.toFixed(2));
-      rect.setAttribute('height', m.h.toFixed(2));
-      rect.setAttribute('rx', Math.min(m.r, m.w / 2, m.h / 2).toFixed(2));
-      rect.setAttribute('opacity', m.o.toFixed(3));
-    });
-    axes.setAttribute('opacity', state.axes.toFixed(3));
-  };
-  const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  draw(current);
-  return function morphTo(index, instant) {
-    cancelAnimationFrame(frame);
-    const from = { marks: current.marks.map(m => ({ ...m })), axes: current.axes };
-    const to = chartLayouts[index];
-    if (instant) {
-      current = { marks: to.marks.map(m => ({ ...m })), axes: to.axes };
-      draw(current);
-      return;
-    }
-    const duration = 900;
-    const stagger = 22;
-    const start = performance.now();
-    const step = now => {
-      const elapsed = now - start;
-      current.marks = from.marks.map((a, i) => {
-        const b = to.marks[i];
-        const t = ease(Math.min(1, Math.max(0, (elapsed - i * stagger) / duration)));
-        const lerp = key => a[key] + (b[key] - a[key]) * t;
-        return { cx: lerp('cx'), cy: lerp('cy'), w: lerp('w'), h: lerp('h'), r: lerp('r'), o: lerp('o') };
-      });
-      current.axes = from.axes + (to.axes - from.axes) * ease(Math.min(1, elapsed / duration));
-      draw(current);
-      if (elapsed < duration + stagger * CHART_MARKS) frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-  };
-}
-
 // Illustrative charts: manual selection stops rotation; motion preferences win.
 const chartCarousel = document.querySelector('[data-chart-carousel]');
 if (chartCarousel) {
+  const slides = [...chartCarousel.querySelectorAll('.chart-slide')];
   const dots = [...chartCarousel.querySelectorAll('.chart-dot')];
-  const names = dots.map(dot => dot.getAttribute('aria-label'));
-  const morphTo = createMorphChart(chartCarousel.querySelector('.chart-stage'));
   const playback = chartCarousel.querySelector('.chart-playback');
   const name = chartCarousel.querySelector('.chart-name');
   const counter = chartCarousel.querySelector('.chart-counter');
@@ -347,15 +233,15 @@ if (chartCarousel) {
     playback.classList.toggle('is-paused', paused);
     playback.setAttribute('aria-label', paused ? playback.dataset.playLabel : playback.dataset.pauseLabel);
     if (!paused && !gesture && visible && !hovering && !document.hidden && !chartCarousel.contains(document.activeElement)) {
-      timer = setTimeout(() => selectChart((active + 1) % names.length, false), 6000);
+      timer = setTimeout(() => selectChart((active + 1) % slides.length, false), 6000);
     }
   }
   function selectChart(index, manual) {
     active = index;
-    morphTo(active, reducedMotion.matches);
+    slides.forEach((slide, i) => slide.classList.toggle('is-active', i === active));
     dots.forEach((dot, i) => dot.setAttribute('aria-pressed', String(i === active)));
-    name.textContent = names[active];
-    counter.textContent = `${String(active + 1).padStart(2, '0')} / ${String(names.length).padStart(2, '0')}`;
+    name.textContent = slides[active].dataset.chartName;
+    counter.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
     if (manual) {
       playing = false;
       announcement.textContent = name.textContent;
@@ -365,7 +251,7 @@ if (chartCarousel) {
   dots.forEach((dot, i) => dot.addEventListener('click', () => selectChart(i, true)));
   playback.addEventListener('click', () => {
     if (reducedMotion.matches) {
-      selectChart((active + 1) % names.length, true);
+      selectChart((active + 1) % slides.length, true);
       return;
     }
     playing = !playing;
@@ -374,7 +260,7 @@ if (chartCarousel) {
   chartCarousel.querySelector('.chart-pagination').addEventListener('keydown', event => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
-    const next = event.key === 'Home' ? 0 : event.key === 'End' ? names.length - 1 : (active + (event.key === 'ArrowRight' ? 1 : -1) + names.length) % names.length;
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? slides.length - 1 : (active + (event.key === 'ArrowRight' ? 1 : -1) + slides.length) % slides.length;
     selectChart(next, true);
     dots[next].focus();
   });
@@ -391,7 +277,7 @@ if (chartCarousel) {
     stage.style.removeProperty('--chart-drag');
     if (stage.hasPointerCapture(id)) stage.releasePointerCapture(id);
     if (!cancelled && Math.abs(dx) >= threshold && Math.abs(dx) > Math.abs(dy) * 1.3) {
-      selectChart((active + (dx < 0 ? 1 : -1) + names.length) % names.length, true);
+      selectChart((active + (dx < 0 ? 1 : -1) + slides.length) % slides.length, true);
     } else {
       scheduleChart();
     }

@@ -13,6 +13,8 @@ const files = [
   'favicon.svg',
   'assets/asteroid-observation.gif',
   'assets/asteroid-observation-still.png',
+  'assets/fonts/inter-latin-var.woff2',
+  'assets/fonts/OFL.txt',
 ];
 
 // Check inputs before replacing the generated directory.
